@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { STATUS } from "../utils/status";
 
+
 const initialState = {
   products: [],
   productsStatus: STATUS.IDLE,
@@ -10,6 +11,8 @@ const initialState = {
 
 const PRODUCTS_API = "https://dummyjson.com/products?limit=200";
 
+
+//Bütün ürünleri cekme
 export const getProducts = createAsyncThunk("getproducts", async () => {
   const response = await fetch(PRODUCTS_API);
   const data = await response.json();
@@ -18,6 +21,7 @@ export const getProducts = createAsyncThunk("getproducts", async () => {
   return data.products;
 });
 
+//ürünlerin detayını cekme
 export const getDetailProduct = createAsyncThunk(
   "getdetailproduct",
   async (id) => {

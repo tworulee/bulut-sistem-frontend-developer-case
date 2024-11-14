@@ -11,6 +11,7 @@ const Product = ({ product }) => {
   const navigate =useNavigate()
 
   return (
+    //Bir ürünün gösterilecek kısmı
     <Card onClick={()=>navigate(`/products/${product.id}`)}
       sx={{
         maxWidth: 245,
