@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 import Rating from "@mui/material/Rating";
 
 const ProductDetailComp = ({ productDetail }) => {
-  console.log(productDetail);
+ 
   return (
     //Detayda gösterilen ürün
     <Card

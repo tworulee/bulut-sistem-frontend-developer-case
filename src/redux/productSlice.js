@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { STATUS } from "../utils/status";
 
-
 const initialState = {
   products: [],
   productsStatus: STATUS.IDLE,
@@ -10,7 +9,6 @@ const initialState = {
 };
 
 const PRODUCTS_API = "https://dummyjson.com/products?limit=200";
-
 
 //Bütün ürünleri cekme
 export const getProducts = createAsyncThunk("getproducts", async () => {
@@ -28,6 +26,19 @@ export const getDetailProduct = createAsyncThunk(
     const response = await fetch(`https://dummyjson.com/products/${id}`);
     const data = await response.json();
     return data;
+  }
+);
+
+export const getCategoryProducts = createAsyncThunk(
+  "getcategoryproducts",
+  async (category) => {
+    const response = await fetch(
+      `https://dummyjson.com/products/category/${category}`
+    );
+    const data =await response.json();
+    console.log(data.products);
+
+    return data.products;
   }
 );
 
@@ -56,6 +67,16 @@ export const productSlice = createSlice({
       })
       .addCase(getDetailProduct.rejected, (state) => {
         state.productDetailStatus = STATUS.FAIL;
+      })
+      .addCase(getCategoryProducts.pending, (state) => {
+        state.productsStatus = STATUS.LOADING;
+      })
+      .addCase(getCategoryProducts.fulfilled, (state, action) => {
+        state.productsStatus = STATUS.SUCCESS;
+        state.products = action.payload;
+      })
+      .addCase(getCategoryProducts.rejected, (state) => {
+        state.productsStatus = STATUS.FAIL;
       });
   },
 });

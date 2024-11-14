@@ -1,10 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState, useRef } from "react";
-import { getProducts } from "../redux/productSlice";
+import { getProducts, getCategoryProducts } from "../redux/productSlice";
 import Loading from "./Loading";
 import Product from "./Product";
 
-const Products = () => {
+const isNullOrEmpty = (str) => {
+  if (str !== undefined && str !== null && str.length > 0) {
+    return false;
+  }
+  return true;
+};
+
+const Products = ({ category, filterText }) => {
   const dispatch = useDispatch();
   const { products, productsStatus } = useSelector((state) => state.products);
 
@@ -16,13 +23,40 @@ const Products = () => {
 
   //Bütün ürünlerin çekilmesi
   useEffect(() => {
-    dispatch(getProducts());
-  }, [dispatch]);
+    if (category) {
+      dispatch(getCategoryProducts(category));
+    } else {
+      dispatch(getProducts());
+    }
+  }, [dispatch, category]);
 
-  
+  useEffect(() => {
+    if (!isNullOrEmpty(filterText)) {
+      const debaunce = setTimeout(()=>{
+        const filteredVisible = products.filter(each =>
+        each.title.toLowerCase().includes(filterText.toLowerCase())
+      );
+      setVisible(filteredVisible);
+      console.log(filteredVisible);
+      },500)
+      return ()=>{clearTimeout(debaunce)} 
+      
+    }else{
+      setVisible(products.slice(0, 15))
+    }
+  }, [filterText]);
+
   useEffect(() => {
     if (products.length > 0) {
-      setVisible(products.slice(0, 15)); 
+      if (!isNullOrEmpty(filterText)) {
+        setVisible(
+          products
+            .slice(0, 15)
+            .filter((each) => each.title.includes(filterText))
+        );
+      } else {
+        setVisible(products.slice(0, 15));
+      }
     }
   }, [products]);
 
@@ -32,15 +66,14 @@ const Products = () => {
     }
 
     observerRef.current = new IntersectionObserver((entries) => {
-      if (
-        entries[0].isIntersecting &&
-        products.length > visible.length
-      ) {
+      if (entries[0].isIntersecting && products.length > visible.length) {
         setIsLoadingMore(true);
+        if (isNullOrEmpty(filterText)) {
         setVisible((prev) => [
           ...prev,
-          ...products.slice(prev.length, prev.length + 10), 
+          ...products.slice(prev.length, prev.length + 10),
         ]);
+      }
         setIsLoadingMore(false);
       }
     });
@@ -52,29 +85,27 @@ const Products = () => {
     return () => {
       if (observerRef.current) observerRef.current.disconnect();
     };
-  }, [lastElement, products, visible]);
+  }, [lastElement, products, visible ,filterText]);
 
   if (productsStatus === "LOADING") {
     return <Loading />;
   }
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="flex justify-center items-center min-h-screen m-6">
-        <div className="flex flex-wrap justify-center items-center w-4/5">
+    <div className="flex flex-col items-center w-5/6">
+      <div className="flex min-h-screen m-6 w-full">
+        <div className="flex flex-wrap w-full">
           {visible.map((product) => (
             <Product product={product} key={product.id} />
           ))}
 
-          
           {isLoadingMore &&
             Array.from({ length: 5 }).map((_, index) => (
-              <div key={index} >
+              <div key={index}>
                 <Loading />
               </div>
             ))}
 
-          
           <div ref={setLastElement} style={{ height: "1px" }}></div>
         </div>
       </div>
