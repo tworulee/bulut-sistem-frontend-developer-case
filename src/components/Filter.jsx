@@ -1,16 +1,28 @@
-import { useDispatch, useSelector } from "react-redux";
 
-const Filter = ({setFilterText}) => {
-    // const dispatch = useDispatch();
-    // const { categories } = useSelector((state) => state.categories);
-  
-    // useEffect(() => {
-    //   dispatch(getCategories());
-    // }, [dispatch]);
+
+const Filter = ({setFilterText,setFromAmount,setToAmount}) => {
+ 
   return (
-    <div>
-      <input placeholder='ara'   onChange={(e) => setFilterText(e.target.value)}/>
-    </div>
+    <div className="flex flex-col sm:flex-row gap-2 items-center sm:items-stretch justify-center p-4">
+    <input
+      placeholder="Ara"
+      onChange={(e) => setFilterText(e.target.value)}
+      className="border rounded-md p-2 w-1/2 sm:w-auto sm:flex-1 focus:outline-none focus:ring focus:border-blue-300"
+    />
+    <input
+      type="number"
+      placeholder="From"
+      onChange={(e) => setFromAmount(e.target.value)}
+      className="border rounded-md p-2 w-1/2 sm:w-auto sm:flex-1 focus:outline-none focus:ring focus:border-blue-300"
+    />
+    <input
+      type="number"
+      placeholder="To"
+      onChange={(e) => setToAmount(e.target.value)}
+      className="border rounded-md p-2 w-1/2 sm:w-auto sm:flex-1 focus:outline-none focus:ring focus:border-blue-300"
+    />
+  </div>
+  
   )
 }
 

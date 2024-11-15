@@ -15,7 +15,8 @@ const Product = ({ product }) => {
     <Card onClick={()=>navigate(`/products/${product.id}`)}
       sx={{
         maxWidth: 245,
-        m: 3,
+        maxHeight: 345,
+        m: { xs: "auto", sm: 3 },
         transition: "transform 0.3s, box-shadow 0.3s",
         "&:hover": {
           transform: "scale(1.05)",

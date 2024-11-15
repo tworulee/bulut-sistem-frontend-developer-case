@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { STATUS } from "../utils/status";
 
+
 const initialState = {
   products: [],
   productsStatus: STATUS.IDLE,
@@ -14,8 +15,6 @@ const PRODUCTS_API = "https://dummyjson.com/products?limit=200";
 export const getProducts = createAsyncThunk("getproducts", async () => {
   const response = await fetch(PRODUCTS_API);
   const data = await response.json();
-  console.log(data.products);
-
   return data.products;
 });
 
@@ -29,6 +28,7 @@ export const getDetailProduct = createAsyncThunk(
   }
 );
 
+//kategoriye gore urun cekme
 export const getCategoryProducts = createAsyncThunk(
   "getcategoryproducts",
   async (category) => {
@@ -36,8 +36,6 @@ export const getCategoryProducts = createAsyncThunk(
       `https://dummyjson.com/products/category/${category}`
     );
     const data =await response.json();
-    console.log(data.products);
-
     return data.products;
   }
 );

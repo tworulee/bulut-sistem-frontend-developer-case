@@ -11,7 +11,7 @@ const isNullOrEmpty = (str) => {
   return true;
 };
 
-const Products = ({ category, filterText }) => {
+const Products = ({ category, filterText, fromAmount, toAmount }) => {
   const dispatch = useDispatch();
   const { products, productsStatus } = useSelector((state) => state.products);
 
@@ -30,21 +30,35 @@ const Products = ({ category, filterText }) => {
     }
   }, [dispatch, category]);
 
+  //title  ve fiyata göre arama
   useEffect(() => {
-    if (!isNullOrEmpty(filterText)) {
-      const debaunce = setTimeout(()=>{
-        const filteredVisible = products.filter(each =>
-        each.title.toLowerCase().includes(filterText.toLowerCase())
-      );
-      setVisible(filteredVisible);
-      console.log(filteredVisible);
-      },500)
-      return ()=>{clearTimeout(debaunce)} 
-      
-    }else{
-      setVisible(products.slice(0, 15))
+    if (!isNullOrEmpty(filterText) || fromAmount > -1 || toAmount > -1) {
+      let filteredVisible = products;
+      if (!isNullOrEmpty(filterText)) {
+        filteredVisible = filteredVisible.filter((each) =>
+          each.title.toLowerCase().includes(filterText.toLowerCase())
+        );
+      }
+      if (fromAmount > -1) {
+        filteredVisible = filteredVisible.filter(
+          (each) => each.price >= fromAmount
+        );
+      }
+      if (toAmount > -1) {
+        filteredVisible = filteredVisible.filter(
+          (each) => each.price <= toAmount
+        );
+      }
+      const debaunce = setTimeout(() => {
+        setVisible(filteredVisible);
+      }, 500);
+      return () => {
+        clearTimeout(debaunce);
+      };
+    } else {
+      setVisible(products.slice(0, 15));
     }
-  }, [filterText]);
+  }, [filterText, fromAmount, toAmount]);
 
   useEffect(() => {
     if (products.length > 0) {
@@ -69,11 +83,11 @@ const Products = ({ category, filterText }) => {
       if (entries[0].isIntersecting && products.length > visible.length) {
         setIsLoadingMore(true);
         if (isNullOrEmpty(filterText)) {
-        setVisible((prev) => [
-          ...prev,
-          ...products.slice(prev.length, prev.length + 10),
-        ]);
-      }
+          setVisible((prev) => [
+            ...prev,
+            ...products.slice(prev.length, prev.length + 10),
+          ]);
+        }
         setIsLoadingMore(false);
       }
     });
@@ -85,14 +99,14 @@ const Products = ({ category, filterText }) => {
     return () => {
       if (observerRef.current) observerRef.current.disconnect();
     };
-  }, [lastElement, products, visible ,filterText]);
+  }, [lastElement, products, visible, filterText]);
 
   if (productsStatus === "LOADING") {
     return <Loading />;
   }
 
   return (
-    <div className="flex flex-col items-center w-5/6">
+    <div className="flex flex-col items-center ">
       <div className="flex min-h-screen m-6 w-full">
         <div className="flex flex-wrap w-full">
           {visible.map((product) => (

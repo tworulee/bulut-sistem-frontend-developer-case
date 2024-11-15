@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 const initialState = {
   categories: [],
 };
-
+//Api de bulunan kategorileri cekme
 export const getCategories = createAsyncThunk("category", async () => {
   const response = await fetch("https://dummyjson.com/products/categories");
   const data = await response.json();
