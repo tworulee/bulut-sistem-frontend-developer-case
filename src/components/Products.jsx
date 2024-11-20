@@ -4,16 +4,12 @@ import { getProducts, getCategoryProducts } from "../redux/productSlice";
 import Loading from "./Loading";
 import Product from "./Product";
 
-const isNullOrEmpty = (str) => {
-  if (str !== undefined && str !== null && str.length > 0) {
-    return false;
-  }
-  return true;
-};
-
-const Products = ({ category, filterText, fromAmount, toAmount }) => {
+const Products = ({ category }) => {
   const dispatch = useDispatch();
-  const { products, productsStatus } = useSelector((state) => state.products);
+  const { filteredProducts, productsStatus } = useSelector(
+    (state) => state.products
+  );
+  const products = filteredProducts || [];
 
   //lazy loading icin stateler
   const [visible, setVisible] = useState([]);
@@ -30,77 +26,32 @@ const Products = ({ category, filterText, fromAmount, toAmount }) => {
     }
   }, [dispatch, category]);
 
-  //title  ve fiyata göre arama
-  useEffect(() => {
-    if (!isNullOrEmpty(filterText) || fromAmount > -1 || toAmount > -1) {
-      let filteredVisible = products;
-      if (!isNullOrEmpty(filterText)) {
-        filteredVisible = filteredVisible.filter((each) =>
-          each.title.toLowerCase().includes(filterText.toLowerCase())
-        );
-      }
-      if (fromAmount > -1) {
-        filteredVisible = filteredVisible.filter(
-          (each) => each.price >= fromAmount
-        );
-      }
-      if (toAmount > -1) {
-        filteredVisible = filteredVisible.filter(
-          (each) => each.price <= toAmount
-        );
-      }
-      const debaunce = setTimeout(() => {
-        setVisible(filteredVisible);
-      }, 500);
-      return () => {
-        clearTimeout(debaunce);
-      };
-    } else {
-      setVisible(products.slice(0, 15));
-    }
-  }, [filterText, fromAmount, toAmount]);
-
   useEffect(() => {
     if (products.length > 0) {
-      if (!isNullOrEmpty(filterText)) {
-        setVisible(
-          products
-            .slice(0, 15)
-            .filter((each) => each.title.includes(filterText))
-        );
-      } else {
-        setVisible(products.slice(0, 15));
-      }
+      setVisible(products.slice(0, 15));
     }
   }, [products]);
-
   useEffect(() => {
     if (observerRef.current) {
       observerRef.current.disconnect();
     }
-
     observerRef.current = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting && products.length > visible.length) {
         setIsLoadingMore(true);
-        if (isNullOrEmpty(filterText)) {
-          setVisible((prev) => [
-            ...prev,
-            ...products.slice(prev.length, prev.length + 10),
-          ]);
-        }
+        setVisible((prev) => [
+          ...prev,
+          ...products.slice(prev.length, prev.length + 10),
+        ]);
         setIsLoadingMore(false);
       }
     });
-
     if (lastElement) {
       observerRef.current.observe(lastElement);
     }
-
     return () => {
       if (observerRef.current) observerRef.current.disconnect();
     };
-  }, [lastElement, products, visible, filterText]);
-
+  }, [lastElement, products, visible]);
   if (productsStatus === "LOADING") {
     return <Loading />;
   }

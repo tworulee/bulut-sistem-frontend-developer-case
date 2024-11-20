@@ -4,16 +4,17 @@ import { STATUS } from "../utils/status";
 
 const initialState = {
   products: [],
+  filteredProducts: [],
   productsStatus: STATUS.IDLE,
   productDetail: [],
   productDetailStatus: STATUS.IDLE,
 };
 
-const PRODUCTS_API = "https://dummyjson.com/products?limit=200";
+const PRODUCTS_API = "https://dummyjson.com/products";
 
 //Bütün ürünleri cekme
 export const getProducts = createAsyncThunk("getproducts", async () => {
-  const response = await fetch(PRODUCTS_API);
+  const response = await fetch(`${PRODUCTS_API}?limit=200`);
   const data = await response.json();
   return data.products;
 });
@@ -22,7 +23,7 @@ export const getProducts = createAsyncThunk("getproducts", async () => {
 export const getDetailProduct = createAsyncThunk(
   "getdetailproduct",
   async (id) => {
-    const response = await fetch(`https://dummyjson.com/products/${id}`);
+    const response = await fetch(`${PRODUCTS_API}/${id}`);
     const data = await response.json();
     return data;
   }
@@ -33,7 +34,7 @@ export const getCategoryProducts = createAsyncThunk(
   "getcategoryproducts",
   async (category) => {
     const response = await fetch(
-      `https://dummyjson.com/products/category/${category}`
+      `${PRODUCTS_API}/category/${category}`
     );
     const data =await response.json();
     return data.products;
@@ -43,7 +44,18 @@ export const getCategoryProducts = createAsyncThunk(
 export const productSlice = createSlice({
   name: "products",
   initialState,
-  reducers: {},
+  reducers: {
+    filterProducts: (state, action) => {
+      const filterTerm = action.payload.toLowerCase();
+      state.filteredProducts = state.products.filter((product) =>
+        product.title.toLowerCase().includes(filterTerm) 
+       
+      );
+    },
+    clearFilter: (state) => {
+      state.filteredProducts = state.products; 
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getProducts.pending, (state) => {
@@ -52,6 +64,7 @@ export const productSlice = createSlice({
       .addCase(getProducts.fulfilled, (state, action) => {
         state.productsStatus = STATUS.SUCCESS;
         state.products = action.payload;
+        state.filteredProducts = action.payload;
       })
       .addCase(getProducts.rejected, (state) => {
         state.productsStatus = STATUS.FAIL;
@@ -72,6 +85,7 @@ export const productSlice = createSlice({
       .addCase(getCategoryProducts.fulfilled, (state, action) => {
         state.productsStatus = STATUS.SUCCESS;
         state.products = action.payload;
+        state.filteredProducts = action.payload;
       })
       .addCase(getCategoryProducts.rejected, (state) => {
         state.productsStatus = STATUS.FAIL;
@@ -79,4 +93,5 @@ export const productSlice = createSlice({
   },
 });
 
+export const { filterProducts, clearFilter } = productSlice.actions;
 export default productSlice.reducer;
