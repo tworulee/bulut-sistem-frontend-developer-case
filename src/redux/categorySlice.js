@@ -10,7 +10,7 @@ export const getCategories = createAsyncThunk("category", async () => {
   const data = await response.json();
   console.log(data);
   
-  const names = data.map((category) => category.slug);
+  const names = data.map((category) => category.name);
   
   return names;
 });

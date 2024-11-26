@@ -14,6 +14,11 @@ const Category = ({ setCategory }) => {
     setCategory(e.target.value); 
   };
 
+  
+  const formatToSlug = (text) => {
+    return text.toLowerCase().replace(/\s+/g, "-");
+  };
+
   return (
     <div className="w-1/6 p-4">
       <div className="border-b pb-1 px-2 text-xl font-bold">Kategoriler</div>
@@ -23,7 +28,7 @@ const Category = ({ setCategory }) => {
       >
         <option value="">Tüm Ürünler</option>
         {categories?.map((category) => (
-          <option value={category} key={category}>
+          <option value={formatToSlug(category)} key={category}>
             {category}
           </option>
         ))}
