@@ -7,12 +7,12 @@ const HomePage = () => {
   const [category, setCategory] = useState("");
 
   return (
-    <div className="flex">
-      <Category setCategory={setCategory} />
-      <div className="w-5/6">
+    <div>
+      <div className="flex items-center justify-center">
+        <Category setCategory={setCategory} />
         <Filter />
-        <Products category={category} />
       </div>
+      <Products category={category} />
     </div>
   );
 };

@@ -10,29 +10,24 @@ const Category = ({ setCategory }) => {
     dispatch(getCategories());
   }, [dispatch]);
 
+  const handleChange = (e) => {
+    setCategory(e.target.value); 
+  };
+
   return (
-    <div className="w-1/5 bg-gray-100 p-4">
+    <div className="w-1/6 p-4">
       <div className="border-b pb-1 px-2 text-xl font-bold">Kategoriler</div>
-      <div
-        onClick={(e) => {
-          e.preventDefault();
-          setCategory("");
-        }}
-        className="text-lg cursor-pointer hover:bg-gray-200 p-2"
+      <select
+        onChange={handleChange}
+        className="block w-full px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-lg cursor-pointer mt-2"
       >
-        Tüm Ürünler
-      </div>
-      <div>
-        {categories?.map((category, i) => (
-          <div
-            onClick={() => setCategory(category)}
-            className="text-lg cursor-pointer hover:bg-gray-200 p-2"
-            key={i}
-          >
+        <option value="">Tüm Ürünler</option>
+        {categories?.map((category) => (
+          <option value={category} key={category}>
             {category}
-          </div>
+          </option>
         ))}
-      </div>
+      </select>
     </div>
   );
 };

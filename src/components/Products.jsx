@@ -57,9 +57,9 @@ const Products = ({ category }) => {
   }
 
   return (
-    <div className="flex flex-col items-center ">
-      <div className="flex min-h-screen m-6 w-full">
-        <div className="flex flex-wrap w-full">
+    <div className="flex flex-col items-center">
+      <div className="flex min-h-screen m-6 w-full justify-center">
+        <div className="flex flex-wrap w-full justify-center">
           {visible.map((product) => (
             <Product product={product} key={product.id} />
           ))}

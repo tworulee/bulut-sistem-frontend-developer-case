@@ -35,7 +35,7 @@ const Filter = () => {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-2 items-center sm:items-stretch justify-center p-4">
+    <div className="flex flex-col sm:flex-row gap-2 items-center sm:items-stretch justify-center p-4 mt-9">
       <input
         placeholder="Ara"
         onChange={handleFilter}
@@ -57,7 +57,7 @@ const Filter = () => {
       />
       <button
         onClick={handleFilterByPrice}
-        className="bg-blue-500 text-white p-2"
+        className="bg-gray-600 text-white p-2 rounded"
       >
         Filter by Price
       </button>
